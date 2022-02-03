@@ -22,7 +22,7 @@ before_script:
 build_job:
   stage: build
   script:
-  - ./gradlew assembleRelease
+  - ./gradlew assembleDebug
   artifacts:
     paths:
     - app/build/outputs
