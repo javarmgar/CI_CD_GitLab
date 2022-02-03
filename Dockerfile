@@ -1,8 +1,16 @@
-FROM openjdk:8-jdk
-LABEL maintainer="Iterators Mobile <mobile@iterato.rs>"
+FROM ubuntu:latest
+LABEL maintainer="Javier Armenta <javarmgar@gmail.com>"
+
+ENV JAVA_HOME=/opt/java/openjdk
+COPY --from=eclipse-temurin:11 $JAVA_HOME $JAVA_HOME
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV HOME "/root"
+
+RUN apt-get --quiet update  --yes
+RUN apt-get --quiet install --yes curl 
+RUN apt-get --quiet install --yes apt-utils
 
 #node
 RUN curl -sL https://deb.nodesource.com/setup_15.x | bash - \
@@ -12,7 +20,6 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb http://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
 #tools
-RUN apt-get --quiet update --yes
 RUN apt-get --quiet install --yes wget \
     tar \
     unzip \
@@ -22,8 +29,7 @@ RUN apt-get --quiet install --yes wget \
     patch \
     ruby-dev \
     zlib1g-dev \
-    liblzma-dev \
-    yarn
+    liblzma-dev 
 
 #android
 ENV ANDROID_COMPILE_SDK "30"
@@ -43,13 +49,13 @@ ENV PATH ${PATH}:${ANDROID_SDK_ROOT}:${ANDROID_SDK_ROOT}/platform-tools:${ANDROI
 
 RUN yes | sdkmanager --update
 RUN yes | sdkmanager --licenses
-RUN yes | sdkmanager \
-    "patcher;v4" \
-    "platforms;android-${ANDROID_COMPILE_SDK}" \
-    "emulator" \
-    "build-tools;${ANDROID_BUILD_TOOLS}" \
-    "tools" \
-    "platform-tools" 
+
+RUN yes | sdkmanager "patcher;v4" 
+RUN yes | sdkmanager "platforms;android-${ANDROID_COMPILE_SDK}" 
+RUN yes | sdkmanager "emulator" 
+RUN yes | sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}" 
+RUN yes | sdkmanager "tools" 
+RUN yes | sdkmanager "platform-tools"
 
 # fastlane
 RUN apt-get --quiet install --yes rubygems
@@ -61,6 +67,11 @@ RUN gem install bundler
 RUN gem install fastlane --version 2.183.2 --no-document
 
 ENV GRADLE_USER_HOME=$PWD/.gradle
+
+# RUN curl -o- -L https://yarnpkg.com/install.sh | bash
+# RUN $HOME/.yarn/bin/yarn install
+
+RUN npm install -g yarn
 RUN yarn global add firebase-tools
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
