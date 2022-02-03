@@ -5,7 +5,7 @@ This Docker image contains the Android SDK and fastlane.
 `.gitlab-ci.yml` example:
 
 ```
-image: iteratorsmobile/gitlab-ci-android-fastlane
+image: javarmgar/gitlab-ci-android-fastlane
 
 stages:
 - build
