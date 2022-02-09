@@ -1,6 +1,9 @@
 # gitlab-ci-android-fastlane
 
-This Docker image contains the Android SDK and fastlane.
+This is a custom version: Due to the fact that newer gradle versions need to run with JDK 11+ it is necessary 
+to settle the container image with this JDK version as default.
+
+This Docker image contains the Android SDK and fastlane and JDK 11.
 
 `.gitlab-ci.yml` example:
 
